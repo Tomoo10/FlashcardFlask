@@ -1,21 +1,26 @@
 from flask import Flask, render_template, url_for, redirect, request, session, flash
 from pathlib import Path
 from db import db
-from models import UserModel, SetModel, CardModel
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_migrate import Migrate
-import random
+import os
 
 #flask + database
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flashcard_flask.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+migrate = Migrate()
+
+database_url = os.environ.get("DATABASE_URL", "sqlite:///local.db")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 app.instance_path = Path("./data").resolve()
 #manage user login+logout
 app.secret_key = 'supersecretkey'
 
 db.init_app(app)
-migrate = Migrate(app, db)
+migrate.init_app(app, db)
 
 from user import user_bp
 from index import index_bp

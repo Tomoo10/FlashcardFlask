@@ -3,6 +3,7 @@ from pathlib import Path
 from db import db
 from models import UserModel, SetModel, CardModel
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_migrate import Migrate
 import random
 
 #flask + database
@@ -14,6 +15,7 @@ app.instance_path = Path("./data").resolve()
 app.secret_key = 'supersecretkey'
 
 db.init_app(app)
+migrate = Migrate(app, db)
 
 from user import user_bp
 from index import index_bp
@@ -27,6 +29,5 @@ app.register_blueprint(quiz_bp)
 
 if __name__ == '__main__':
     with app.app_context():
-        db.drop_all()
         db.create_all()
     app.run(debug=True, port=8000, use_reloader=True)

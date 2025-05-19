@@ -8,7 +8,7 @@ class UserModel(db.Model):
     id = mapped_column(Integer, primary_key=True)
     username = mapped_column(String(15), unique=True, nullable=False)
     fullname = mapped_column(String(255))
-    password = mapped_column(String(94), nullable=False)  # Assuming hashed password storage
+    password = mapped_column(String(255), nullable=False)  # Assuming hashed password storage
 
     # Relationships
     sets = relationship('SetModel', backref='user', lazy=True, cascade='all, delete-orphan')
